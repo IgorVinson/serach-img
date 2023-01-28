@@ -7,7 +7,7 @@ const options = {
   image_type: 'photo',
   orientation: 'horizontal',
   safesearch: true,
-  q: 'dog',
+  q: 'kids',
 };
 
 async function getImages() {

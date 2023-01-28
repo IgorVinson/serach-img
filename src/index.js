@@ -61,21 +61,3 @@ const addPhotoCards = data => {
 };
 
 getImages().then(addPhotoCards);
-
-// <div className="photo-card">
-//   <img src="" alt="" loading="lazy" />
-//   <div className="info">
-//     <p className="info-item">
-//       <b>Likes</b>
-//     </p>
-//     <p className="info-item">
-//       <b>Views</b>
-//     </p>
-//     <p className="info-item">
-//       <b>Comments</b>
-//     </p>
-//     <p className="info-item">
-//       <b>Downloads</b>
-//     </p>
-//   </div>
-// </div>
