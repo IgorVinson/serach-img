@@ -19,7 +19,7 @@ async function getImages(query, loadMore) {
         page
       },
     });
-    return results.data.hits;
+    return results.data;
   } catch (error) {
     console.error(error);
   }

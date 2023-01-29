@@ -1,45 +1,40 @@
 import getImages from './getImages';
-import Notiflix from "notiflix";
+import  createLightBox  from './utils/lightBox';
+import notify from './utils/notify';
+import scrollImage from './utils/scrollImage';
 
 const form = document.querySelector('.search-form');
-
+const loadMoreButton = document.createElement('button');
 
 form.addEventListener('submit', e => {
-  e.preventDefault();
   const input = document.querySelector('.search-form input');
+  e.preventDefault();
   const inputValue = input.value;
   getImages(inputValue).then(data => {
     notify(data);
-    addPhotoCards(data);
-    //create button and add to DOM
-    createLoadMoreButton();
-    addEventButton();
+    addPhotoCards(data.hits);
+    addLoadMoreButtonInDom();
   });
-})
+});
 
-const createLoadMoreButton = () => {
-  const loadMoreButton = document.createElement('button');
+const addLoadMoreButtonInDom = () => {
   loadMoreButton.classList.add('load-more');
   loadMoreButton.textContent = 'Load more';
   const divButton = document.querySelector('.load-more-button');
   divButton.append(loadMoreButton);
-  return loadMoreButton;
-}
-
-const loadMoreBtn = document.querySelector('.load-more');
-const addEventButton = () => {
+  addEventLoadMoreButton(loadMoreButton);
+};
+const addEventLoadMoreButton = (loadMoreBtn) => {
   loadMoreBtn.addEventListener('click', () => {
     const input = document.querySelector('.search-form input');
     const inputValue = input.value;
     const loadMore = true;
-    getImages(inputValue,loadMore).then(data => {
-      addPhotoCards(data,loadMore);
-    });
-  })
-}
+    getImages(inputValue, loadMore).then(data => {
+      addPhotoCards(data.hits, loadMore);
+    })
+  });
+};
 
-
-// create photo card
 const createPhotoCard = card => {
   const {
     webformatURL,
@@ -53,23 +48,23 @@ const createPhotoCard = card => {
   const photoCard = document.createElement('div');
   photoCard.classList.add('photo-card');
   photoCard.innerHTML = `
-    <img src="${webformatURL}" alt="${tags}" data-source="${largeImageURL}" />
-   <div class="info">
-    <p class="info-item">
+    <a href='${largeImageURL}'><img src='${webformatURL}' alt='${tags}' data-source='${largeImageURL}' /></a>
+   <div class='info'>
+    <p class='info-item'>
       <b>Likes</b>
-      <span class="counts">${likes}</span>
+      <span class='counts'>${likes}</span>
     </p>
-    <p class="info-item">
+    <p class='info-item'>
       <b>Views</b>
-      <span class="counts">${views}</span>
+      <span class='counts'>${views}</span>
     </p>
-    <p class="info-item">
+    <p class='info-item'>
       <b>Comments</b>
-      <span class="counts">${comments}</span>
+      <span class='counts'>${comments}</span>
     </p>
-    <p class="info-item">
+    <p class='info-item'>
       <b>Downloads</b>
-      <span class="counts">${downloads}</span>
+      <span class='counts'>${downloads}</span>
     </p>
   </div>
   `;
@@ -77,22 +72,28 @@ const createPhotoCard = card => {
 };
 
 // add photo cards to DOM
-function addPhotoCards (data,loadMore) {
+function addPhotoCards(data, loadMore) {
   const photoCards = data.map(createPhotoCard);
   const gallery = document.querySelector('.gallery');
-  if(!loadMore){
+  if (!loadMore) {
     gallery.innerHTML = '';
   }
   gallery.append(...photoCards);
+  createLightBox();
+  scrollImage();
 };
 
-// add notification if no images
-getImages().then(notify);
+//add endless scroll after loadmore button
+const scrollImage = () => {
+  const { height: cardHeight } = document
+    .querySelector(".gallery")
+    .firstElementChild.getBoundingClientRect();
 
-function notify(data){
-  if (data.length === 0) {
-    Notiflix.Notify.failure(
-      'Sorry, there are no images matching your search query. Please try again.'
-    );
-  }
-};
+  window.scrollBy({
+    top: cardHeight * 2,
+    behavior: "smooth",
+  });
+}
+
+
+
